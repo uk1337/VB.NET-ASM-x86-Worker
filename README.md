@@ -12,43 +12,43 @@ The function returns a boolean value indicating whether the worker thread was su
 
 Here's an example of how to use the AsmWorker module:
 ```vb.net
-        'Get a process object for the target process
-        Dim targetProcess As Process = Process.GetProcessesByName("notepad").FirstOrDefault()
+'Get a process object for the target process
+Dim targetProcess As Process = Process.GetProcessesByName("notepad").FirstOrDefault()
 
-        If targetProcess Is Nothing Then
-            Console.WriteLine("Target process not found.")
-            Return
-        End If
+If targetProcess Is Nothing Then
+    Console.WriteLine("Target process not found.")
+    Return
+End If
 
-        'Open the process with PROCESS_CREATE_THREAD and PROCESS_VM_OPERATION access
-        Dim hProcess As IntPtr = OpenProcess(&H1 Or &H8, False, targetProcess.Id)
+'Open the process with PROCESS_CREATE_THREAD and PROCESS_VM_OPERATION access
+Dim hProcess As IntPtr = OpenProcess(&H1 Or &H8, False, targetProcess.Id)
 
-        If hProcess = IntPtr.Zero Then
-            Console.WriteLine("Failed to open process.")
-            Return
-        End If
+If hProcess = IntPtr.Zero Then
+    Console.WriteLine("Failed to open process.")
+    Return
+End If
 
-        'Example assembly code to write a message box to the target process
-        Dim asmCode As Byte() = {
-            &H68, &H0, &H0, &H0, &H0,   ' push 0
-            &H68, &H0, &H0, &H0, &H0,   ' push 0
-            &H68, &H0, &H0, &H0, &H0,   ' push 0
-            &H68, &H0, &H0, &H0, &H0,   ' push 0
-            &H68, &H0, &H0, &H0, &H0,   ' push 0
-            &HB8, &H0, &H0, &H0, &H0,   ' mov eax, MessageBoxA
-            &HFF, &HD0,                 ' call eax
-            &HC3                        ' ret
-        }
+'Example assembly code to write a message box to the target process
+Dim asmCode As Byte() = {
+    &H68, &H0, &H0, &H0, &H0,   'push 0
+    &H68, &H0, &H0, &H0, &H0,   'push 0
+    &H68, &H0, &H0, &H0, &H0,   'push 0
+    &H68, &H0, &H0, &H0, &H0,   'push 0
+    &H68, &H0, &H0, &H0, &H0,   'push 0
+    &HB8, &H0, &H0, &H0, &H0,   'mov eax, MessageBoxA
+    &HFF, &HD0,                 'call eax
+    &HC3                        'ret
+}
 
-        'Call the CreateAsmWorker function to execute the assembly code in the target process
-        If Not CreateAsmWorker(hProcess, asmCode, asmCode.Length) Then
-            Console.WriteLine("Failed to create asm worker.")
-        Else
-            Console.WriteLine("Successfully created asm worker.")
-        End If
+'Call the CreateAsmWorker function to execute the assembly code in the target process
+If Not CreateAsmWorker(hProcess, asmCode, asmCode.Length) Then
+    Console.WriteLine("Failed to create asm worker.")
+Else
+    Console.WriteLine("Successfully created asm worker.")
+End If
 
-        'Close the handle to the target process
-        CloseHandle(hProcess)
+'Close the handle to the target process
+CloseHandle(hProcess)
 ```
 
 
