@@ -6,7 +6,10 @@ Module AsmWorker
     Private Declare Function VirtualAllocEx Lib "kernel32.dll" (ByVal hProcess As IntPtr, ByVal lpAddress As IntPtr, ByVal dwSize As UInt32, ByVal flAllocationType As UInt32, ByVal flProtect As UInt32) As IntPtr
     Private Declare Function WriteProcessMemory Lib "kernel32.dll" (ByVal hProcess As IntPtr, ByVal lpBaseAddress As IntPtr, ByVal lpBuffer As Byte(), ByVal nSize As UInt32, ByRef lpNumberOfBytesWritten As UInt32) As Boolean
     Private Declare Function CreateRemoteThread Lib "kernel32.dll" (ByVal hProcess As IntPtr, ByVal lpThreadAttributes As IntPtr, ByVal dwStackSize As UInt32, ByVal lpStartAddress As IntPtr, ByVal lpParameter As IntPtr, ByVal dwCreationFlags As UInt32, ByRef lpThreadId As IntPtr) As IntPtr
-
+    Private Declare Function WaitForSingleObject Lib "kernel32.dll" (ByVal hHandle As IntPtr, ByVal dwMilliseconds As UInt32) As UInt32
+    Private Declare Function CloseHandle Lib "kernel32.dll" (ByVal hObject As IntPtr) As Boolean
+    Private Declare Function VirtualFreeEx Lib "kernel32.dll" (ByVal hProcess As IntPtr, ByVal lpAddress As IntPtr, ByVal dwSize As UInt32, ByVal dwFreeType As UInt32) As Boolean
+                
     Public Function CreateAsmWorker(ByVal hProcess As IntPtr, ByVal asmBytes As Byte(), ByVal asmSize As Integer) As Boolean
         'Allocate memory for the assembly code in the target process
         Dim pRemoteCode As IntPtr = VirtualAllocEx(hProcess, IntPtr.Zero, asmSize, &H1000 Or &H2000, &H40)
